@@ -2,26 +2,29 @@
 import React, { useEffect, useState } from 'react';
 import ProductList from '../../components/Products/ProductsList';
 import { useNavigate } from 'react-router-dom';
-import ProductStore from '../../store/ProductStore';
+import { fetchProducts } from '../../store/ProductStore';
+import { toast } from 'react-toastify';
+import Loader from '../../components/common/Loader';
 
 const Products = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loader, setLoader] = useState(true);
+  const [products , setProducts] = useState([])
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadProducts();
+    getProductsList();
   }, []);
 
-  const loadProducts = async () => {
-    setLoading(true);
-    setError(null);
-    await ProductStore.fetchProducts();
-    setProducts(ProductStore.getProducts());
-    setLoading(false);
-    setError(ProductStore.getError());
+  const getProductsList = async () => {
+    try{
+      const data =await fetchProducts();
+      setProducts(data)
+    } catch(error){
+      toast.error(error)
+    } finally{
+      setLoader(false)
+    }
   };
 
 
@@ -41,6 +44,8 @@ const Products = () => {
 
 
   return (
+    <>
+    {loader && <Loader />}
     <div className="w-full p-6 bg-white shadow-lg rounded-lg mt-10">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold text-gray-800">Manage Products</h2>
@@ -51,8 +56,9 @@ const Products = () => {
           <span className="mr-2">+</span> Add Product
         </button>
       </div>
-      <ProductList products={products} onEdit={handleEdit} onDelete={handleDelete} />
+      {products?.length > 0 && <ProductList products={products} onEdit={handleEdit} onDelete={handleDelete} />}
     </div>
+    </>
   );
 };
 

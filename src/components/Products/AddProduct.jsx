@@ -5,7 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import InputField from '../common/InputField';
 import TextAreaField from '../common/TextAreaField';
-import axios from 'axios';
+import { toast } from 'react-toastify';
+import { createProduct } from '../../store/ProductStore';
 
 const schema = yup.object().shape({
   name: yup.string().required('Name is required'),
@@ -25,29 +26,30 @@ const ProductForm = () => {
   });
 
   const [imageUrl,setImageUrl] = useState("");
+  const [loader,setLoader] = useState(false)
 
   const onSubmit = async (data) => {
-    const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      formData.append(key, data[key]);
-    });
-    formData.set("thumbnail", imageUrl);
-    const productData = {
-      name: formData.get('name'),
-      price: Number(formData.get('price')),
-      stock: Number(formData.get('stock')),
-      description: formData.get('description'),
-      thumbnail: imageUrl
-    };
-    console.log(productData,"productData")
-    try {
-      const response = await axios.post('http://localhost:5000/api/cms/products/add', productData);
-      if (!response.ok) throw new Error('Failed to add product');
-      const newProduct = await response.json();
-      state.products.push(newProduct);
-    } catch (err) {
-      state.error = err.message;
+    try{
+      setLoader(true);
+      const formData = new FormData();
+      Object.keys(data).forEach((key) => {
+        formData.append(key, data[key]);
+      });
+      formData.set("thumbnail", imageUrl);
+      const productData = {
+        name: formData.get('name'),
+        price: Number(formData.get('price')),
+        stock: Number(formData.get('stock')),
+        description: formData.get('description'),
+        thumbnail: imageUrl
+      };
+      await createProduct(productData)
+    } catch(error){
+      toast.error(error)
+    } finally {
+      setLoader(false)
     }
+    
   };
 
   const uploadImage = (image) => {
