@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import ProductList from '../../components/Products/ProductsList';
 import { useNavigate } from 'react-router-dom';
-import { fetchProducts } from '../../store/ProductStore';
+import { deleteProduct, fetchProducts, toggleProductStatus } from '../../store/ProductStore';
 import { toast } from 'react-toastify';
 import Loader from '../../components/common/Loader';
 
@@ -18,8 +18,9 @@ const Products = () => {
 
   const getProductsList = async () => {
     try{
-      const data =await fetchProducts();
-      setProducts(data)
+      setLoader(true)
+      const response =await fetchProducts();
+      setProducts(response?.list)
     } catch(error){
       toast.error(error)
     } finally{
@@ -28,18 +29,37 @@ const Products = () => {
   };
 
 
-  const handleDelete = (id) => {
-    setProducts(products.filter((product) => product.id !== id));
+  const handleDelete = async(id) => {
+    setLoader(true)
+    try {
+      const res = await deleteProduct(id);
+      if(res?.success === true)
+        getProductsList();
+    } catch (error) {
+      console.error("Failed to toggle product status:", error);
+    }
+    setLoader(false)
   };
 
-  const handleEdit = (product) => {
-    // Logic to edit the product will be implemented here
-    alert(`Editing product: ${product.name}`);
+  const handleEdit = (id) => {
+    navigate(`/products/add-product?id=${id}`)
   };
 
   const handleAddProduct = () => {
     // Logic to add a product will be implemented here
     navigate('add-product');
+  };
+
+  const handleToggleStatus = async (prd_id,currentStatus) => {
+    setLoader(true)
+    try {
+      const res = await toggleProductStatus(prd_id,!currentStatus);
+      if(res.success === true)
+        getProductsList();
+    } catch (error) {
+      console.error("Failed to toggle product status:", error);
+    }
+    setLoader(false)
   };
 
 
@@ -56,7 +76,7 @@ const Products = () => {
           <span className="mr-2">+</span> Add Product
         </button>
       </div>
-      {products?.length > 0 && <ProductList products={products} onEdit={handleEdit} onDelete={handleDelete} />}
+      {products?.length > 0 && <ProductList products={products} onEdit={handleEdit} onDelete={handleDelete} onToggleStatus={handleToggleStatus} />}
     </div>
     </>
   );
