@@ -7,6 +7,9 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 // Create an axios instance with default settings
 const httpClient = axios.create({
     baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    }
 });
 
 // Add a request interceptor to set common headers
@@ -14,7 +17,7 @@ httpClient.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token'); // or however you manage tokens
         if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+            config.headers.Authorization = `${token}`;
         }
         return config;
     },

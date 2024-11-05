@@ -1,6 +1,6 @@
 // src/App.jsx
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
 import AppRoutes from './Routes';
 import Sidebar from './components/Sidebar/Sidebar';
 import Footer from './components/common/Footer';
@@ -8,6 +8,14 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
+  const token = localStorage.getItem('token')
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(!token)
+      navigate('/login')
+  },[])
+
   const showSidebar = !['/login', '/signup'].includes(window.location.pathname);
 
   return (
@@ -16,7 +24,7 @@ const App = () => {
         {showSidebar && <Sidebar />} 
           <AppRoutes />
       </div>
-      <Footer />
+      {showSidebar && <Footer />}
     </div>
   );
 };
