@@ -2,16 +2,16 @@ import { toast } from 'react-toastify';
 import httpClient from '../utils/httpClient'; 
 
 // Login function to authenticate user
-export const login = async (email, password) => {
+export const login = async (payload) => {
     try {
         // Send login request to the backend
-        const response = await httpClient.post('/api/auth/admin-login', {
-            email,
-            password
-        });
-        const { token } = response.data.token;
-        localStorage.setItem('token', token);
-        localStorage.setItem('userRole', response.data.user.role);
+        const response = await httpClient.post('/auth/admin-login', payload);
+        if(response.data.success === true){
+            const token  = response.data.token;
+            toast.success(response.data.message);
+            localStorage.setItem('token', token);
+            localStorage.setItem('userRole', response.data.user.role);
+        }
         return response.data;
 
     } catch (error) {
@@ -23,7 +23,7 @@ export const login = async (email, password) => {
 
 // Logout function to clear authentication data
 export const logout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
     localStorage.removeItem('userRole');
     // Optionally, redirect the user to a login page or homepage
 };
