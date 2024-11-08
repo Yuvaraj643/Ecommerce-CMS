@@ -6,38 +6,79 @@ import { toast } from 'react-toastify';
 const Sidebar = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    toast.success('Logged out successfully');
-    navigate('/login');
-  };
+  const handleLogout = async() =>{
+    try{
+      const response = await logout()
+      if(response)
+        navigate('/login')
+    } catch (error){
+      toast.error("Error on Logout")
+    }
+  }
+
   return (
-    <div className="bg-gray-800 text-white w-64 min-h-screen p-4">
-      <h2 className="text-xl font-semibold mb-4">CMS</h2>
-      <ul>
-        <li className="mb-2">
-          <a href="/dashboard" className="hover:bg-gray-700 block p-2 rounded">Dashboard</a>
-        </li>
-        <li className="mb-2">
-          <a href="/products" className="hover:bg-gray-700 block p-2 rounded">Products</a>
-        </li>
-        <li className="mb-2">
-          <a href="/categories" className="hover:bg-gray-700 block p-2 rounded">Categories</a>
-        </li>
-        <li className="mb-2">
-          <a href="/orders" className="hover:bg-gray-700 block p-2 rounded">Orders</a>
-        </li>
-        <li className="mb-2">
-          <a href="/users" className="hover:bg-gray-700 block p-2 rounded">Users</a>
-        </li>
-        <li className="mb-2">
-          <a href="/settings" className="hover:bg-gray-700 block p-2 rounded">Settings</a>
-        </li>
-        <li className="mb-2" onClick={handleLogout}>
-          <p className="hover:bg-gray-700 block p-2 rounded">Logout</p>
-        </li>
-      </ul>
+    <div className="flex h-screen w-1/5 flex-col justify-between border-e bg-white">
+      <div className="px-4 py-6">
+        <span className="grid h-10 w-32 place-content-center rounded-lg bg-gray-100 text-sm text-gray-600">
+          Sklassics
+        </span>
+
+        <ul className="mt-10 space-y-2">
+          <li>
+            <a
+              href="/"
+              className="block rounded-lg hover:bg-gray-100 px-4 py-2 text-lg font-medium text-gray-500"
+            >
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a
+              href="/products"
+              className="block rounded-lg px-4 py-2 text-lg font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            >
+              Products
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="/orders"
+              className="block rounded-lg px-4 py-2 text-lg font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            >
+              Orders
+            </a>
+          </li>
+          <li onClick={handleLogout}>
+            <a
+              href="#"
+              className="block rounded-lg px-4 py-2 text-lg font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            >
+              Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
+        <a href="#" className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
+          <img
+            alt=""
+            src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+            className="size-10 rounded-full object-cover"
+          />
+
+          <div>
+            <p className="text-xs">
+              <strong className="block font-medium">SuperAdmin</strong>
+
+              <span> superadmin@gmail.com </span>
+            </p>
+          </div>
+        </a>
+      </div>
     </div>
+
   );
 };
 

@@ -7,6 +7,7 @@ import Signup from './pages/Auth/Signup';
 import Products from './pages/Products/Products';
 import Categories from './pages/Categories/Categories';
 import ProductForm from './components/Products/AddProduct';
+import { NotFound } from './components/common/NotFound';
 
 const AppRoutes = () => {
   return (
@@ -17,7 +18,7 @@ const AppRoutes = () => {
       <Route path="/products" element={<Products />} />
       <Route path="/products/add-product" element={<ProductForm />} />
       <Route path="/categories" element={<Categories />} />
-      <Route path="*" element={<h1>Page Not Found</h1>} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

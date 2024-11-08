@@ -24,7 +24,7 @@ const App = () => {
         {showSidebar && <Sidebar />} 
           <AppRoutes />
       </div>
-      {showSidebar && <Footer />}
+      {/* {showSidebar && <Footer />} */}
     </div>
   );
 };

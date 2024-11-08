@@ -1,71 +1,108 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import InputField from '../../components/common/InputField';
-import Loader from '../../components/common/Loader';
 import { login } from '../../store/AuthStore';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../../components/common/Loader';
 
-const schema = yup.object().shape({
-  email: yup.string().email('Invalid email address').required('Email is required'),
-  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-});
-
-const Login = () => {
-  const [loader, setLoader] = useState(false);
+const LoginForm = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const [loader,setLoader] = useState(false)
   const navigate = useNavigate();
-
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(schema),
-  });
-
-  useEffect(() => {
-    if (localStorage.getItem('token')) {
-      navigate('/dashboard');
-    }
-  }, []);
-
-  const onSubmit = async(data) => {
-    try{
-      setLoader(true);
-      let res = await login(data);
-      if(res?.success === true){
-        navigate('/dashboard');
+  // Form submission handler
+  const onSubmit = async (data) => {
+    try {
+      setLoader(true)
+      const response = await login(data)
+      if (response.sucesss){
+        toast.success(response.message)
+        navigate('/dashboard')
       }
     } catch (error) {
-      toast.error("Failed to login");
-    } finally {
-      setLoader(false);
+      toast.error('Error during API call:');
+    } finally{
+      setLoader(false)
     }
   };
 
   return (
-    <div className="flex w-full items-center justify-center min-h-screen bg-gray-100">
-    {loader && <Loader />}
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96 transform transition hover:shadow-2xl">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-4">
-            <InputField
-              label="Email"
-              type="email"
-              error={errors.email?.message}
-              {...register('email')}
+    <div className="bg-sky-100 flex justify-center items-center w-full mx-auto">
+      {loader && <Loader />}
+      <div className="w-1/2 h-screen hidden lg:block">
+        <img
+          src="https://img.freepik.com/fotos-premium/imagen-fondo_910766-187.jpg?w=826"
+          alt="Placeholder Image"
+          className="object-cover w-full h-full"
+        />
+      </div>
+      <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
+        <h1 className="text-2xl font-semibold mb-4">Login</h1>
+        <form onSubmit={handleSubmit(onSubmit)} method="POST">
+          {/* Email Input */}
+          <div className="mb-4 bg-sky-100">
+            <label htmlFor="Email" className="block text-gray-600">
+              Email
+            </label>
+            <input
+              type="text"
+              id="email"
+              name="email"
+              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+              {...register('email', { required: 'Email is required' })}
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+            )}
           </div>
+
+          {/* Password Input */}
           <div className="mb-4">
-            <InputField
-              label="Password"
+            <label htmlFor="password" className="block text-gray-800">
+              Password
+            </label>
+            <input
               type="password"
-              error={errors.password?.message}
-              {...register('password')}
+              id="password"
+              name="password"
+              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+              {...register('password', {
+                required: 'Password is required',
+                minLength: {
+                  value: 6,
+                  message: 'Password must be at least 6 characters',
+                },
+              })}
             />
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+            )}
           </div>
+
+          {/* Remember Me Checkbox
+          <div className="mb-4 flex items-center">
+            <input
+              type="checkbox"
+              id="remember"
+              name="remember"
+              className="text-red-500"
+              {...register('remember')}
+            />
+            <label htmlFor="remember" className="text-green-900 ml-2">
+              Remember Me
+            </label>
+          </div> */}
+
+          {/* Forgot Password Link */}
+          <div className="mb-6 text-blue-500">
+            <a href="#" className="hover:underline">
+              Forgot Password?
+            </a>
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-4 px-4 rounded hover:bg-blue-700 transition duration-200 mt-5"
+            className="bg-red-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full"
           >
             Login
           </button>
@@ -75,4 +112,4 @@ const Login = () => {
   );
 };
 
-export default Login
+export default LoginForm;

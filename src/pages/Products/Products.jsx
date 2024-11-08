@@ -67,7 +67,7 @@ const Products = () => {
     <>
     {loader && <Loader />}
     <div className="w-full p-6 bg-white shadow-lg rounded-lg mt-10">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 px-10">
         <h2 className="text-2xl font-semibold text-gray-800">Manage Products</h2>
         <button
           onClick={handleAddProduct}
