@@ -121,7 +121,7 @@ const ProductForm = () => {
 
 
   return (
-    <div className="p-12 bg-white shadow-md rounded-lg mt-10 w-1/3">
+    <div className="p-12 bg-white shadow-md rounded-lg mt-10 w-1/3 mx-auto">
       {loader && <Loader />}
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Create Product</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
